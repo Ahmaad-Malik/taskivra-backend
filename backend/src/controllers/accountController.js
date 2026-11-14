@@ -94,8 +94,13 @@ class AccountController {
     deleteAccount = async(req, res, next) => {
         try {
             const accountId = req.params.id
+            const password = req.body?.password ?? null
 
-            const account = await this.accountService.deleteAccount(Number(accountId))
+            if(!password){
+                throw new BadRequestError("Password is required")
+            }
+
+            const account = await this.accountService.deleteAccount(Number(req.user.accountId), Number(accountId), password)
 
             res.status(200).json({
                 success:true,

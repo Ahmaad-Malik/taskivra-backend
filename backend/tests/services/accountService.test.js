@@ -66,7 +66,7 @@ describe("AccountService", ()=>{
                     lastname:"farooqi",
                     email:"muhtashamfarooqi433@gmail.com",
                     dateOfBirth:"2005-03-01",
-                    password:"muhtasham@123"
+                    password:"Muhtasham@123"
                 }
             )).resolves.toBeDefined()
         })
@@ -81,7 +81,7 @@ describe("AccountService", ()=>{
                     firstname:"john",
                     lastname:"klien",
                     dateOfBirth:"2005-03-01",
-                    password:"johnklien@123"
+                    password:"Johnklien@123"
                 }
             ],
             [
@@ -92,7 +92,7 @@ describe("AccountService", ()=>{
                     firstname:"john",
                     lastname:"klien",
                     dateOfBirth:"2005-03-01",
-                    password:"johnklien@123"
+                    password:"Johnklien@123"
                 }
             ],
             [
@@ -103,7 +103,7 @@ describe("AccountService", ()=>{
                     firstname:"john",
                     lastname:"klien",
                     dateOfBirth:"2005-03-01",
-                    password:"johnklien@123"
+                    password:"Johnklien@123"
                 }
             ],
         ])("Should reject, %s", async(description, userAccountDetails)=>{
@@ -126,7 +126,7 @@ describe("AccountService", ()=>{
                 lastname:"farooqi",
                 dateOfBirth:"2005-03-01",
                 email:"muhtashamfarooqi433@gmail.com",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             })
             const tokenHash = crypto.createHash("sha256").update(verificationToken).digest("hex")
             const redisKey = `signup:verification:${tokenHash}`      
@@ -165,7 +165,7 @@ describe("AccountService", ()=>{
                 lastname:"farooqi",
                 dateOfBirth:"2005-03-01",
                 email:"muhtashamfarooqi433@gmail.com",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             })
     
             //hashing token
@@ -193,7 +193,7 @@ describe("AccountService", ()=>{
                 lastname:"farooqi",
                 dateOfBirth:"2005-03-01",
                 email:"muhtashamfarooqi433@gmail.com",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             })
     
             //adding an account with same username directly in DB
@@ -204,7 +204,7 @@ describe("AccountService", ()=>{
                     lastname:"fernandes",
                     dateOfBirth:new Date("2005-03-01"),
                     email:"calvinfernandes@gmail.com",
-                    password:"calvinfernandes@123"
+                    password:"Calvinfernandes@123"
                 }
             })
             //adding an account with same email directly in DB
@@ -215,7 +215,7 @@ describe("AccountService", ()=>{
                     lastname:"fernandes",
                     dateOfBirth:new Date("2005-03-01"),
                     email:"muhtashamfarooqi433@gmail.com",
-                    password:"calvinfernandes@123"
+                    password:"Calvinfernandes@123"
                 }
             })
     
@@ -278,7 +278,11 @@ describe("AccountService", ()=>{
     describe("AccountService.deleteAccount", ()=>{
         //valid testcase for deleteAccount(id exists)
         test("Should pass, id exists", async()=>{
-            await expect(service.deleteAccount(testUserAccounts.userAccount1.id)).resolves.toBeDefined()
+            await expect(service.deleteAccount(
+                testUserAccounts.userAccount1.id, //<-- request user id
+                testUserAccounts.userAccount1.id, //<-- account to be deleted id 
+                "Johnfernandes@123"
+            )).resolves.toBeDefined()
             
             //trying to fetch the deleted account(should be null)
             const account = await prisma.user.findUnique({
@@ -289,7 +293,11 @@ describe("AccountService", ()=>{
 
         //invalid testcase for deleteAccount(id does not exist)
         test("Should reject, id does not exist", async()=>{
-            await expect(service.deleteAccount(100)).rejects.toThrow(
+            await expect(service.deleteAccount(
+                100, //<-- request user id
+                100, //<-- account to be deleted id
+                "randompassword"
+            )).rejects.toThrow(
                 "Invalid account id"
             )
         })
@@ -318,8 +326,8 @@ describe("AccountService", ()=>{
         //valid testcase for changePassword(id exists and old password matches)
         test("Should pass, id exists and old password matches", async()=>{
             const account = await service.changePassword(
-                "johnfernandes@123",
-                "john@//123",
+                "Johnfernandes@123",
+                "John@//123",
                 testUserAccounts.userAccount1.id,
             )
             
@@ -328,7 +336,7 @@ describe("AccountService", ()=>{
             })
 
             const passwordUpdated = await bcrypt.compare(
-                "john@//123",
+                "John@//123",
                 accountWithPassword.password
             )
             expect(account).toBeDefined()
@@ -340,8 +348,8 @@ describe("AccountService", ()=>{
         //invalid testcase for changePassword(id does not exist)
         test("Should reject, id does not exist", async()=>{
             await expect(service.changePassword(
-                "johnfernandes@123",
-                "john@//123",
+                "Johnfernandes@123",
+                "John@//123",
                 100,
             )).rejects.toThrow("Invalid account id")
         })
@@ -349,8 +357,8 @@ describe("AccountService", ()=>{
         //invalid testcase for changePassword(old password does not match)
         test("Should reject, old password does not match", async()=>{
             await expect(service.changePassword(
-                "oldpassword@123",
-                "john@//123",
+                "Oldpassword@123",
+                "John@//123",
                 testUserAccounts.userAccount1.id,
             )).rejects.toThrow("Password does not match")
         })

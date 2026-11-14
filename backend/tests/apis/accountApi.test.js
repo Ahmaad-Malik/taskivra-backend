@@ -70,7 +70,7 @@ describe("/api/account", ()=>{
                 lastname:"farooqi",
                 username:"muhtasham_123",
                 email:"muhtashamfarooqi433@gmail.com",
-                password:"muhtasham@123",
+                password:"Muhtasham@123",
                 dateOfBirth:"2005-03-01"
             })
 
@@ -103,7 +103,7 @@ describe("/api/account", ()=>{
                 firstname:"muhtasham",
                 lastname:"farooqi",
                 email:"muhtashamfarooqi433@gmail.com",
-                password:"muhtasham@123",
+                password:"Muhtasham@123",
                 dateOfBirth:"2005-03-01"
             })
             
@@ -131,7 +131,7 @@ describe("/api/account", ()=>{
                 lastname:"farooqi",
                 username:"muhtasham_123",
                 email:"muhtashamfarooqi433@gmail.com",
-                password:"muhtasham@123",
+                password:"Muhtasham@123",
                 dateOfBirth:"2005-03-01"
             })
 
@@ -171,7 +171,7 @@ describe("/api/account", ()=>{
                 lastname:"farooqi",
                 username:"muhtasham_123",
                 email:"muhtashamfarooqi433@gmail.com",
-                password:"muhtasham@123",
+                password:"Muhtasham@123",
                 dateOfBirth:"2005-03-01"
             })
             const response = await request(app).post("/api/account/create").send({})
@@ -206,7 +206,7 @@ describe("/api/account", ()=>{
                 lastname:"farooqi",
                 username:"muhtasham_123",
                 email:"muhtashamfarooqi433@gmail.com",
-                password:"muhtasham@123",
+                password:"Muhtasham@123",
                 dateOfBirth:"2005-03-01"
             })
             const response = await request(app).post("/api/account/create").send({
@@ -243,7 +243,7 @@ describe("/api/account", ()=>{
                 lastname:"farooqi",
                 username:"muhtasham_123",
                 email:"muhtashamfarooqi433@gmail.com",
-                password:"muhtasham@123",
+                password:"Muhtasham@123",
                 dateOfBirth:"2005-03-01"
             })
 
@@ -282,7 +282,7 @@ describe("/api/account", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             //hitting update api
@@ -384,7 +384,7 @@ describe("/api/account", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             //hitting update api
@@ -409,7 +409,7 @@ describe("/api/account", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             //hitting update api
@@ -439,7 +439,7 @@ describe("/api/account", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             //hitting update api
@@ -477,11 +477,11 @@ describe("/api/account", ()=>{
             await loginMockUser(
                 agent, 
                 testUserAccounts.userAccount1.username, 
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             //hitting delete account api
-            const deleteResponse = await agent.delete(`/api/account/${testUserAccounts.userAccount1.id}`)
+            const deleteResponse = await agent.delete(`/api/account/${testUserAccounts.userAccount1.id}`).send({password:"Johnfernandes@123"})
 
             expect(deleteResponse.statusCode).toBe(200)
             expect(deleteResponse.body.success).toBe(true)
@@ -498,7 +498,7 @@ describe("/api/account", ()=>{
             const loginResponse = await loginMockUser(
                 agent, 
                 testUserAccounts.userAccount1.username, 
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             expect(loginResponse.statusCode).toBe(401)
@@ -512,7 +512,7 @@ describe("/api/account", ()=>{
         //user is not logged in
         test("Should reject, token is not given", async()=>{
             //hitting the api without logging in
-            let response = await request(app).delete(`/api/account/${testUserAccounts.userAccount1.id}`)
+            let response = await request(app).delete(`/api/account/${testUserAccounts.userAccount1.id}`).send({password:"Johnfernandes@123"})
             expect(response.statusCode).toBe(401)
             expect(response.body.success).toBe(false)
             expect(response.body.message).toBe("Authentication required")
@@ -548,7 +548,7 @@ describe("/api/account", ()=>{
 
             const token = getToken()
             //hitting the api with expired token
-            const response = await request(app).delete(`/api/account/${testUserAccounts.userAccount1.id}`)
+            const response = await request(app).delete(`/api/account/${testUserAccounts.userAccount1.id}`).send({password:"Johnfernandes@123"})
             .set("Cookie", `token=${token}`)
 
             expect(response.statusCode).toBe(401)
@@ -559,6 +559,44 @@ describe("/api/account", ()=>{
             const account = await getAccountFromDb(prisma, {id:testUserAccounts.userAccount1.id})
             expect(account).not.toBeNull()
             expect(account.id).toBe(testUserAccounts.userAccount1.id)
+        })
+
+        //password is not given
+        test("Should reject, password is not given", async()=>{
+            const agent = request.agent(app)
+
+            //loggin in through admin account
+            await loginMockUser(
+                agent,
+                testUserAccounts.userAccount1.username,
+                "Johnfernandes@123"
+            )
+
+            const response = await agent.delete(`/api/account/${testUserAccounts.userAccount1.id}`)
+            expect(response.statusCode).toBe(400)
+            expect(response.body.success).toBe(false)
+            expect(response.body.message).toBe("Password is required")
+            expect(response.body.data).not.toBeDefined()
+
+        })
+
+        //incorrect password given
+        test("Should reject, password is incorrect", async()=>{
+            const agent = request.agent(app)
+
+            //loggin in through admin account
+            await loginMockUser(
+                agent,
+                testUserAccounts.userAccount1.username,
+                "Johnfernandes@123"
+            )
+
+            const response = await agent.delete(`/api/account/${testUserAccounts.userAccount1.id}`).send({password:"Incorrect@123"})
+            expect(response.statusCode).toBe(403)
+            expect(response.body.success).toBe(false)
+            expect(response.body.message).toBe("Incorrect password")
+            expect(response.body.data).not.toBeDefined()
+
         })
 
     })
@@ -573,7 +611,7 @@ describe("/api/account", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             //hitting api
@@ -638,7 +676,7 @@ describe("/api/account", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             //hitting update api
@@ -660,13 +698,13 @@ describe("/api/account", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             //hitting change password api
             const response = await agent.put(`/api/account/changepassword/${testUserAccounts.userAccount1.id}`).send({
-                oldPassword:"johnfernandes@123",
-                newPassword:"johnfernandes_1234"
+                oldPassword:"Johnfernandes@123",
+                newPassword:"Johnfernandes_1234"
             })
 
             expect(response.statusCode).toBe(200)
@@ -682,7 +720,7 @@ describe("/api/account", ()=>{
             const account = await getAccountFromDb(prisma, {id:testUserAccounts.userAccount1.id})
             expect(account.id).toBe(testUserAccounts.userAccount1.id)
 
-            const isPasswordChanged = await bcrypt.compare("johnfernandes_1234", account.password)
+            const isPasswordChanged = await bcrypt.compare("Johnfernandes_1234", account.password)
             expect(isPasswordChanged).toBe(true)
         })
 
@@ -693,8 +731,8 @@ describe("/api/account", ()=>{
             //hitting the api without logging in
             let response = await request(app).put(`/api/account/changepassword/${testUserAccounts.userAccount1.id}`)
             .send({
-                oldPassword:"johnfernandes@123",
-                newPassword:"johnfernandes_1234"
+                oldPassword:"Johnfernandes@123",
+                newPassword:"Johnfernandes_1234"
             })
 
             expect(response.statusCode).toBe(401)
@@ -705,7 +743,7 @@ describe("/api/account", ()=>{
             const account = await getAccountFromDb(prisma, {id:testUserAccounts.userAccount1.id})
             expect(account.id).toBe(testUserAccounts.userAccount1.id)
             
-            const isPasswordChanged = await bcrypt.compare("johnfernandes_1234", account.password)
+            const isPasswordChanged = await bcrypt.compare("Johnfernandes_1234", account.password)
             expect(isPasswordChanged).toBe(false)
         })
 
@@ -737,8 +775,8 @@ describe("/api/account", ()=>{
             const response = await request(app).put(`/api/account/changepassword/${testUserAccounts.userAccount1.id}`)
             .set("Cookie", `token=${token}`)
             .send({
-                oldPassword:"johnfernandes@123",
-                newPassword:"johnfernandes_1234"
+                oldPassword:"Johnfernandes@123",
+                newPassword:"Johnfernandes_1234"
             })
 
             expect(response.statusCode).toBe(401)
@@ -749,7 +787,7 @@ describe("/api/account", ()=>{
             const account = await getAccountFromDb(prisma, {id:testUserAccounts.userAccount1.id})
             expect(account.id).toBe(testUserAccounts.userAccount1.id)
 
-            const isPasswordChanged = await bcrypt.compare("johnfernandes_1234", account.password)
+            const isPasswordChanged = await bcrypt.compare("Johnfernandes_1234", account.password)
             expect(isPasswordChanged).toBe(false)
         })
         
@@ -761,13 +799,13 @@ describe("/api/account", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             //hitting change password api
             const response = await agent.put(`/api/account/changepassword/${testUserAccounts.userAccount2.id}`).send({
-                oldPassword:"johnfernandes@123",
-                newPassword:"johnfernandes_1234"
+                oldPassword:"Johnfernandes@123",
+                newPassword:"Johnfernandes_1234"
             })
 
             expect(response.statusCode).toBe(403)
@@ -777,7 +815,7 @@ describe("/api/account", ()=>{
             //checking password in DB (should not be updated)
             const account = await getAccountFromDb(prisma, {id:testUserAccounts.userAccount2.id})
 
-            const isPasswordChanged = await bcrypt.compare("johnfernandes_1234", account.password)
+            const isPasswordChanged = await bcrypt.compare("Johnfernandes_1234", account.password)
             expect(isPasswordChanged).toBe(false)
         })
 
@@ -789,13 +827,13 @@ describe("/api/account", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             //hitting update api
             const response = await agent.put(`/api/account/changepassword/${testUserAccounts.userAccount1.id}`).send({
-                oldPassword:"johnfernandes_123", //<-- _ instead of @
-                newPassword:"johnfernandes_1234"
+                oldPassword:"Johnfernandes_123", //<-- _ instead of @
+                newPassword:"Johnfernandes_1234"
             })
 
             expect(response.statusCode).toBe(401)
@@ -805,7 +843,7 @@ describe("/api/account", ()=>{
             //checking password in DB (should not be updated)
             const account = await getAccountFromDb(prisma, {id:testUserAccounts.userAccount1.id})
 
-            const isPasswordNotChanged = await bcrypt.compare("johnfernandes@123", account.password)
+            const isPasswordNotChanged = await bcrypt.compare("Johnfernandes@123", account.password)
             expect(isPasswordNotChanged).toBe(true)
         })
 
@@ -814,13 +852,13 @@ describe("/api/account", ()=>{
             [
                 "old password is not given",
                 {
-                    newPassword:"johnfernandes_123"
+                    newPassword:"Johnfernandes_123"
                 }
             ],
             [
                 "new password is not given",
                 {
-                    oldPassword:"johnfernandes@123"
+                    oldPassword:"Johnfernandes@123"
                 }
             ],
         ])("Should reject, %s", async(description, body)=>{
@@ -830,7 +868,7 @@ describe("/api/account", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             //hitting update api
@@ -843,7 +881,7 @@ describe("/api/account", ()=>{
             //checking password in DB (should not be updated)
             const account = await getAccountFromDb(prisma, {id:testUserAccounts.userAccount1.id})
 
-            const isPasswordNotChanged = await bcrypt.compare("johnfernandes@123", account.password)
+            const isPasswordNotChanged = await bcrypt.compare("Johnfernandes@123", account.password)
             expect(isPasswordNotChanged).toBe(true)
         })
     })
@@ -896,7 +934,7 @@ describe("/api/account/admin", ()=>{
             const loginResponse = await loginMockUser(
                 agent,
                 testAdminAccount.username,
-                "admin@123"
+                "Admin@123"
             )
             expect(loginResponse.body.message).toBe("Login successful")
             const response = await agent.get("/api/account/admin")
@@ -969,7 +1007,7 @@ describe("/api/account/admin", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             const response = await agent.get("/api/account/admin")
@@ -990,7 +1028,7 @@ describe("/api/account/admin", ()=>{
             await loginMockUser(
                 agent,
                 testAdminAccount.username,
-                "admin@123"
+                "Admin@123"
             )
 
             const response = await agent.put(`/api/account/admin/inactivate/${testUserAccounts.userAccount1.id}`)
@@ -1083,7 +1121,7 @@ describe("/api/account/admin", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
             const response = await agent.put(`/api/account/admin/inactivate/${testUserAccounts.userAccount1.id}`).send({
@@ -1110,7 +1148,7 @@ describe("/api/account/admin", ()=>{
             await loginMockUser(
                 agent,
                 testAdminAccount.username,
-                "admin@123"
+                "Admin@123"
             )
 
             const response = await agent.put(`/api/account/admin/inactivate/${100}`).send({
@@ -1131,7 +1169,7 @@ describe("/api/account/admin", ()=>{
             await loginMockUser(
                 agent,
                 testAdminAccount.username,
-                "admin@123"
+                "Admin@123"
             )
 
             const response = await agent.put(`/api/account/admin/inactivate/${testUserAccounts.userAccount1.id}`)
@@ -1156,7 +1194,7 @@ describe("/api/account/admin", ()=>{
             await loginMockUser(
                 agent,
                 testAdminAccount.username,
-                "admin@123"
+                "Admin@123"
             )
 
             const response = await agent.put(`/api/account/admin/inactivate/${testUserAccounts.userAccount1.id}`).send({
@@ -1186,10 +1224,10 @@ describe("/api/account/admin", ()=>{
             await loginMockUser(
                 agent,
                 testAdminAccount.username,
-                "admin@123"
+                "Admin@123"
             )
 
-            const response = await agent.delete(`/api/account/admin/${testUserAccounts.userAccount1.id}`)
+            const response = await agent.delete(`/api/account/admin/${testUserAccounts.userAccount1.id}`).send({password:"Admin@123"})
            
             expect(response.statusCode).toBe(200)
             expect(response.body.success).toBe(true)
@@ -1249,7 +1287,7 @@ describe("/api/account/admin", ()=>{
             const token = getToken()
             //hitting the api with expired token
             const response = await request(app).delete(`/api/account/admin/${testUserAccounts.userAccount1.id}`)
-            .set("Cookie", `token=${token}`)
+            .set("Cookie", `token=${token}`).send({password:"Admin@123"})
 
             expect(response.statusCode).toBe(401)
             expect(response.body.success).toBe(false)
@@ -1272,10 +1310,10 @@ describe("/api/account/admin", ()=>{
             await loginMockUser(
                 agent,
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123"
+                "Johnfernandes@123"
             )
 
-            const response = await agent.delete(`/api/account/admin/${testUserAccounts.userAccount1.id}`)
+            const response = await agent.delete(`/api/account/admin/${testUserAccounts.userAccount1.id}`).send({password:"Admin@123"})
             expect(response.statusCode).toBe(403)
             expect(response.body.success).toBe(false)
             expect(response.body.message).toBe("You are not authorized for this action")
@@ -1297,13 +1335,51 @@ describe("/api/account/admin", ()=>{
             await loginMockUser(
                 agent,
                 testAdminAccount.username,
-                "admin@123"
+                "Admin@123"
             )
 
-            const response = await agent.delete(`/api/account/admin/${100}`)
+            const response = await agent.delete(`/api/account/admin/${100}`).send({password:"Admin@123"})
             expect(response.statusCode).toBe(404)
             expect(response.body.success).toBe(false)
             expect(response.body.message).toBe("Invalid account id")
+            expect(response.body.data).not.toBeDefined()
+
+        })
+
+        //password is not given
+        test("Should reject, password is not given", async()=>{
+            const agent = request.agent(app)
+
+            //loggin in through admin account
+            await loginMockUser(
+                agent,
+                testAdminAccount.username,
+                "Admin@123"
+            )
+
+            const response = await agent.delete(`/api/account/admin/${testUserAccounts.userAccount1.id}`)
+            expect(response.statusCode).toBe(400)
+            expect(response.body.success).toBe(false)
+            expect(response.body.message).toBe("Password is required")
+            expect(response.body.data).not.toBeDefined()
+
+        })
+
+        //incorrect password given
+        test("Should reject, password is incorrect", async()=>{
+            const agent = request.agent(app)
+
+            //loggin in through admin account
+            await loginMockUser(
+                agent,
+                testAdminAccount.username,
+                "Admin@123"
+            )
+
+            const response = await agent.delete(`/api/account/admin/${testUserAccounts.userAccount1.id}`).send({password:"Incorrect@123"})
+            expect(response.statusCode).toBe(403)
+            expect(response.body.success).toBe(false)
+            expect(response.body.message).toBe("Incorrect password")
             expect(response.body.data).not.toBeDefined()
 
         })

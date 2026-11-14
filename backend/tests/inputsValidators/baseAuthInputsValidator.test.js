@@ -66,6 +66,58 @@ describe("BaseAuthInputsValidator", ()=>{
         })
     })
 
+    describe("Test password validity", ()=>{
+        //valid testcase for password
+        test("Should pass, password format is valid", ()=>{
+            expect(()=>validator.validatePassword("Muhtasham@123")).not.toThrow()
+        })
+
+        //invalid testcases for password
+        test.each([
+            ["password is less than 8 characters", "Muht_1"],
+            ["password is more that 20 characters long", "Muhtasham_farooqi@1234"],
+            ["password does not contain uppercase letter", "muhtasham@123"],
+            ["password does not contain lowercase letter", "MUHTASHAM@123"],
+            ["password does not contain a digit", "Muhtasham@farooqi"],
+            ["password does not contain special character", "Muhtashamfarooqi123"]
+        ])("Should reject, %d", (description, password)=>{
+            expect(()=>validator.validatePassword(password)).toThrow(
+                "Password must be 8 to 20 characters long, contain at least one uppercase letter, one lowercase letter, one digit and one special character"
+            )
+        })
+    })
+
+    describe("Test email validity", ()=>{
+        //valid testcase for email
+        test("Should pass, email format is valid", ()=>{
+            expect(()=>validator.validateEmail("muhtashamfarooqi433@gmail.com"))
+            .not.toThrow()
+        })
+
+        //invalid testcases 
+        test.each([
+          ["empty string", ""],
+          ["missing @", "plainaddress"],
+          ["missing local part", "@example.com"],
+          ["missing domain", "john@"],
+          ["missing TLD", "john@example"],
+          ["single-char TLD", "john@example.c"],
+          ["numeric TLD", "john@example.123"],
+          ["double @", "john@@example.com"],
+          ["space in local part", "john doe@example.com"],
+          ["invalid character #", "john#doe@example.com"],
+          ["underscore in domain", "john@exam_ple.com"],
+          ["non-ASCII character", "jöhn@example.com"],
+          ["trailing dot", "john@example.com."],
+          ["empty domain label", "john@.com"],
+          ["non-string number", 12345],
+          ["null", null],
+        ])("should reject, %s", (description, email) => {
+          expect(() => new BaseAuthInputsValidator().validateEmail(email))
+            .toThrow("Please enter a valid email address")
+        })
+    })
+
     describe("Test date of birth validity", () => {
 
         beforeAll(() => {
