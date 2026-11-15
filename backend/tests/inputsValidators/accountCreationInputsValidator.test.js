@@ -20,7 +20,7 @@ describe("AccountCreationInputsValidator", ()=>{
             lastname:"farooqi",
             dateOfBirth:"2005-03-01",
             email:"muhtashamfarooqi@gmail.com",
-            password:"muhtasham@123"
+            password:"Muhtasham@123"
         }
         expect(()=>validator.validate(userAccountDetails)).not.toThrow()
     })
@@ -34,7 +34,7 @@ describe("AccountCreationInputsValidator", ()=>{
                 lastname:"farooqi",
                 dateOfBirth:"2005-03-01",
                 email:"muhtashamfarooqi@gmail.com",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             }
         ],
         [
@@ -44,7 +44,7 @@ describe("AccountCreationInputsValidator", ()=>{
                 lastname:"farooqi",
                 dateOfBirth:"2005-03-01",
                 email:"muhtashamfarooqi@gmail.com",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             }
         ],
         [
@@ -54,7 +54,7 @@ describe("AccountCreationInputsValidator", ()=>{
                 firstname:"muhtasham",
                 dateOfBirth:"2005-03-01",
                 email:"muhtashamfarooqi@gmail.com",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             }
         ],
         [
@@ -64,7 +64,7 @@ describe("AccountCreationInputsValidator", ()=>{
                 firstname:"muhtasham",
                 lastname:"farooqi",
                 email:"muhtashamfarooqi@gmail.com",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             }
         ],
         [
@@ -74,7 +74,7 @@ describe("AccountCreationInputsValidator", ()=>{
                 firstname:"muhtasham",
                 lastname:"farooqi",
                 dateOfBirth:"2005-03-01",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             }
         ],
         [
@@ -100,7 +100,7 @@ describe("AccountCreationInputsValidator", ()=>{
                 lastname:"farooqi",
                 dateOfBirth:"2005-03-01",
                 email:"muhtashamfarooqi@gmail.com",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             }
         )).toThrow(
             "Username must be 8-15 characters and can only contain letters, numbers and underscores"
@@ -116,7 +116,7 @@ describe("AccountCreationInputsValidator", ()=>{
                 lastname:"farooqi_223",
                 dateOfBirth:"2005-03-01",
                 email:"muhtashamfarooqi@gmail.com",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             }
         )).toThrow(
             "Name must be between 3-19 characters and can only contain letters"
@@ -132,7 +132,7 @@ describe("AccountCreationInputsValidator", ()=>{
                 lastname:"farooqi",
                 dateOfBirth:"03-01-2005",
                 email:"muhtashamfarooqi@gmail.com",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             }
         )).toThrow(
             "Date of birth must be in YYYY-MM-DD format"
@@ -148,7 +148,7 @@ describe("AccountCreationInputsValidator", ()=>{
                 lastname:"farooqi",
                 dateOfBirth:"2005-03-01",
                 email:"muhtashamfarooqi_gmail.com",
-                password:"muhtasham@123"
+                password:"Muhtasham@123"
             }
         )).toThrow(
             "Please enter a valid email address"
@@ -165,7 +165,7 @@ describe("AccountCreationInputsValidator", ()=>{
                 lastname:"farooqi",
                 dateOfBirth:"2005-03-01",
                 email:"muhtashamfarooqi@gmail.com",
-                password:"muhtasham@123012345_@farooi"
+                password:"Muhtasham@123012345_@farooi"
             }
         ],
         [
@@ -178,10 +178,54 @@ describe("AccountCreationInputsValidator", ()=>{
                 email:"muhtashamfarooqi@gmail.com",
                 password:"M.m_123"
             }
+        ],
+        [
+            "Password does not contain uppercase letter",
+            {
+                username:"muhtasham_123", 
+                firstname:"muhtasham",
+                lastname:"farooqi",
+                dateOfBirth:"2005-03-01",
+                email:"muhtashamfarooqi@gmail.com",
+                password:"muhtasham@123"
+            }
+        ],
+        [
+            "Password does not contain lowercase letter",
+            {
+                username:"muhtasham_123", 
+                firstname:"muhtasham",
+                lastname:"farooqi",
+                dateOfBirth:"2005-03-01",
+                email:"muhtashamfarooqi@gmail.com",
+                password:"MUHTASHAM@123"
+            }
+        ],
+        [
+            "Password does not contain digit",
+            {
+                username:"muhtasham_123", 
+                firstname:"muhtasham",
+                lastname:"farooqi",
+                dateOfBirth:"2005-03-01",
+                email:"muhtashamfarooqi@gmail.com",
+                password:"Muhtasham@"
+            }
+        ],
+        [
+            "Password does not contain special character",
+            {
+                username:"muhtasham_123", 
+                firstname:"muhtasham",
+                lastname:"farooqi",
+                dateOfBirth:"2005-03-01",
+                email:"muhtashamfarooqi@gmail.com",
+                password:"Muhtasham123"
+            }
         ]
     ])("should reject, %s", (description, userAccountDetails)=>{
         expect(()=>validator.validate(userAccountDetails)).toThrow(
-            "Password must be 8 to 20 characters long"
+            "Password must be 8 to 20 characters long, contain at least one uppercase letter, one lowercase letter, one digit and one special character"
         )
     })
 })

@@ -6,6 +6,7 @@ class BaseAuthInputsValidator {
 
     static validNamePattern = /^[a-zA-Z]{3,19}$/ //only allows letters and forces 3-19 characters
     static validEmailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    static validPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s])\S{8,20}$/
 
     static dateOfBirthPattern = /^\d{4}-\d{2}-\d{2}$/
     static minimumAge = 13
@@ -31,8 +32,8 @@ class BaseAuthInputsValidator {
     }
 
     validatePassword(password){
-        if(password.length > 20 || password.length < 8){
-            throw new BadRequestError("Password must be 8 to 20 characters long")
+        if(!BaseAuthInputsValidator.validPasswordPattern.test(password)){
+            throw new BadRequestError("Password must be 8 to 20 characters long, contain at least one uppercase letter, one lowercase letter, one digit and one special character")
         }
     }
 

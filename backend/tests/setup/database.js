@@ -9,9 +9,9 @@ const connectTestDataBase = async()=>{
 
 //Function for creating a test record in database
 const createTestUserAccount = async()=>{
-    const hashedPassword1 = await bcrypt.hash("johnfernandes@123",10)
-    const hashedPassword2 = await bcrypt.hash("lindawatson@123",10)
-    const hashedPassword3 = await bcrypt.hash("stacywilliams@123",10)
+    const hashedPassword1 = await bcrypt.hash("Johnfernandes@123",10)
+    const hashedPassword2 = await bcrypt.hash("Lindawatson@123",10)
+    const hashedPassword3 = await bcrypt.hash("Stacywilliams@123",10)
     const userAccount1 = await prisma.user.create({
         data:{
             username:"john_123",
@@ -50,7 +50,7 @@ const createTestUserAccount = async()=>{
 
 //Function for creating a test admin account record in database
 const createTestAdminAccount = async()=>{
-    const hashedPassword = await bcrypt.hash("admin@123",10)
+    const hashedPassword = await bcrypt.hash("Admin@123",10)
     const adminAccount = await prisma.user.create({
         data:{
             username:"admin_123",

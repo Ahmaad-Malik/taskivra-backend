@@ -60,14 +60,14 @@ describe("/api/auth", ()=>{
                 "correct username and password",
                 ()=>({
                     username:testUserAccounts.userAccount1.username,
-                    password:"johnfernandes@123"
+                    password:"Johnfernandes@123"
                 })
             ],
             [
                 "correct email and password",
                 ()=>({
                     email:testUserAccounts.userAccount1.email,
-                    password:"johnfernandes@123"
+                    password:"Johnfernandes@123"
                 })
             ]
         ])("Should pass, %s", async(description, getBody)=>{
@@ -122,7 +122,7 @@ describe("/api/auth", ()=>{
             [
                 "only password is given",
                 ()=>({
-                    password:"johnfernandes@123"
+                    password:"Johnfernandes@123"
                 })
             ],
         ])("Should reject, %s", async(description, getBody)=>{
@@ -144,28 +144,28 @@ describe("/api/auth", ()=>{
                 "incorrect username and correct password",
                 ()=>({
                     username:"jon_1234",
-                    password:"johnfernandes@123"
+                    password:"Johnfernandes@123"
                 })
             ],
             [
                 "incorrect email and correct password",
                 ()=>({
                     email:"jonfernandes@gmail.com",
-                    password:"johnfernandes@123"
+                    password:"Johnfernandes@123"
                 })
             ],
             [
                 "correct username and incorrect password",
                 ()=>({
                     username:testUserAccounts.userAccount1.username,
-                    password:"jonfernandes@123"
+                    password:"Jonfernandes@123"
                 })
             ],
             [
                 "correct email and incorrect password",
                 ()=>({
                     email:testUserAccounts.userAccount1.email,
-                    password:"jonfernandes@123"
+                    password:"Jonfernandes@123"
                 })
             ],
         ])("Should reject, %s", async(description, getBody)=>{
@@ -187,14 +187,14 @@ describe("/api/auth", ()=>{
                 "account is inactive(test through username login)",
                 ()=>({
                     username:testUserAccounts.deactivatedAccount.username,
-                    password:"stacywilliams@123"
+                    password:"Stacywilliams@123"
                 })
             ],
             [
                 "account is inactive(test through email login)",
                 ()=>({
                     email:testUserAccounts.deactivatedAccount.email,
-                    password:"stacywilliams@123"
+                    password:"Stacywilliams@123"
                 })
             ]
         ])("Should reject, %s", async(description, getBody)=>{
@@ -224,7 +224,7 @@ describe("/api/auth", ()=>{
                 .post("/api/auth/login")
                 .send({
                     username: testUserAccounts.userAccount1.username,
-                    password: "johnfernandes@123"
+                    password: "Johnfernandes@123"
                 })
         
             expect(loginResponse.statusCode).toBe(200)
@@ -392,7 +392,7 @@ describe("/api/auth", ()=>{
             //hitting the api
             const response = await request(app).put("/api/auth/resetpassword").send({
                 resetToken:process.env.MOCK_PASSWORD_RESET_TOKEN,
-                newPassword:"newpassword@123"
+                newPassword:"Newpassword@123"
             })
 
             expect(response.statusCode).toBe(200)
@@ -406,7 +406,7 @@ describe("/api/auth", ()=>{
                 }
             })
 
-            const isPasswordUpdated = await bcrypt.compare("newpassword@123", account.password)
+            const isPasswordUpdated = await bcrypt.compare("Newpassword@123", account.password)
             expect(isPasswordUpdated).toBe(true)
 
             //checking whether token was deleted from DB
@@ -421,7 +421,7 @@ describe("/api/auth", ()=>{
             //to make sure only new password works
             const oldPasswordLoginResponse = await request(app).post("/api/auth/login").send({
                 username:testUserAccounts.userAccount1.username,
-                password:"johnfernandes@123"
+                password:"Johnfernandes@123"
             })
 
             expect(oldPasswordLoginResponse.statusCode).toBe(401)
@@ -430,7 +430,7 @@ describe("/api/auth", ()=>{
 
             const newPasswordLoginResponse = await request(app).post("/api/auth/login").send({
                 username:testUserAccounts.userAccount1.username,
-                password:"newpassword@123"
+                password:"Newpassword@123"
             })
 
             expect(newPasswordLoginResponse.statusCode).toBe(200)
@@ -441,7 +441,7 @@ describe("/api/auth", ()=>{
         //invalid testcases for reset password api
         test.each([
             ["both token and new password are missing", {}],
-            ["token is missing", {newPassword:"newpassword@123"}],
+            ["token is missing", {newPassword:"Newpassword@123"}],
             ["new password is missing", {resetToken:process.env.MOCK_PASSWORD_RESET_TOKEN}],
 
         ])("Should reject, %s", async(description, body)=>{
@@ -457,7 +457,7 @@ describe("/api/auth", ()=>{
                 }
             })
 
-            const isPasswordNotUpdated = await bcrypt.compare("johnfernandes@123", account.password)
+            const isPasswordNotUpdated = await bcrypt.compare("Johnfernandes@123", account.password)
             expect(isPasswordNotUpdated).toBe(true)
         })
 
@@ -466,7 +466,7 @@ describe("/api/auth", ()=>{
 
             const response = await request(app).put("/api/auth/resetpassword").send({
                     resetToken: "invalid_random_token",
-                    newPassword: "newpassword@123"
+                    newPassword: "Newpassword@123"
             })
         
             expect(response.statusCode).toBe(401)
@@ -481,7 +481,7 @@ describe("/api/auth", ()=>{
             })
         
             const isOldPasswordValid = await bcrypt.compare(
-                "johnfernandes@123",
+                "Johnfernandes@123",
                 account.password
             )
         
@@ -502,7 +502,7 @@ describe("/api/auth", ()=>{
             //hitting the api
             const response = await request(app).put("/api/auth/resetpassword").send({
                 resetToken:process.env.MOCK_PASSWORD_RESET_TOKEN,
-                newPassword:"newpassword@123"
+                newPassword:"Newpassword@123"
             })
 
             expect(response.statusCode).toBe(401)
@@ -516,7 +516,7 @@ describe("/api/auth", ()=>{
                 }
             })
 
-            const isPasswordUpdated = await bcrypt.compare("newpassword@123", account.password)
+            const isPasswordUpdated = await bcrypt.compare("Newpassword@123", account.password)
             expect(isPasswordUpdated).toBe(false)
         })
     })

@@ -48,7 +48,7 @@ describe("AuthService", ()=>{
         test("Should pass, username and password are correct", async()=>{
             const accountDetails = await service.login(
                 testUserAccounts.userAccount1.username,
-                "johnfernandes@123",
+                "Johnfernandes@123",
                 null
             )
             expect(accountDetails).toBeDefined()
@@ -60,7 +60,7 @@ describe("AuthService", ()=>{
         test("Should pass, email and password are correct", async()=>{
             const accountDetails = await service.login(
                 null,
-                "johnfernandes@123",
+                "Johnfernandes@123",
                 testUserAccounts.userAccount1.email
             )
             expect(accountDetails).toBeDefined()
@@ -72,7 +72,7 @@ describe("AuthService", ()=>{
         test("Should reject, username does not exist", async()=>{
             await expect(service.login(
                 "john_1234",
-                "johnfernandes@123",
+                "Johnfernandes@123",
                 null
             )).rejects.toThrow("Invalid username, email or password")
         })
@@ -81,7 +81,7 @@ describe("AuthService", ()=>{
         test("Should reject, email does not exist", async()=>{
             await expect(service.login(
                 null,
-                "johnfernandes@123",
+                "Johnfernandes@123",
                 "jonfernandes@gmail.com"
             )).rejects.toThrow("Invalid username, email or password")
         })
@@ -90,7 +90,7 @@ describe("AuthService", ()=>{
         test("Should reject, incorrect password with correct username", async()=>{
             await expect(service.login(
                 testUserAccounts.userAccount1.username,
-                "johnfernandes123",
+                "Johnfernandes123",
                 null
             )).rejects.toThrow("Invalid username, email or password")
         })
@@ -99,7 +99,7 @@ describe("AuthService", ()=>{
         test("Should reject, incorrect password with correct email", async()=>{
             await expect(service.login(
                 null,
-                "johnfernandes123",
+                "Johnfernandes123",
                 testUserAccounts.userAccount1.email
             )).rejects.toThrow("Invalid username, email or password")
         })
@@ -108,7 +108,7 @@ describe("AuthService", ()=>{
         test("Should reject, account is deactivated", async()=>{
             await expect(service.login(
                 null,
-                "stacywilliams@123",
+                "Stacywilliams@123",
                 testUserAccounts.deactivatedAccount.email
             )).rejects.toThrow("Your account has been deactivated")
         })
@@ -177,7 +177,7 @@ describe("AuthService", ()=>{
 
             //now passing the same original token 
             //and new password in resetPassword function
-            const newPassword = "newpassword@123"
+            const newPassword = "Newpassword@123"
             const account = await service.resetPassword(process.env.MOCK_PASSWORD_RESET_TOKEN, newPassword)
 
             //fetching updated account from DB to check updated password
@@ -193,7 +193,7 @@ describe("AuthService", ()=>{
                 }
             })
 
-            const passwordUpdated = await bcrypt.compare("newpassword@123", updatedAccount.password)
+            const passwordUpdated = await bcrypt.compare("Newpassword@123", updatedAccount.password)
             expect(account).toBeDefined()
             expect(account.id).toBe(testUserAccounts.userAccount1.id)
             expect(account.username).toBe(testUserAccounts.userAccount1.username)
@@ -211,7 +211,7 @@ describe("AuthService", ()=>{
                     userId:testUserAccounts.userAccount1.id
                 }
             })
-            await expect(service.resetPassword("randominvalidtoken", "newpassword@123")).rejects.toThrow(
+            await expect(service.resetPassword("randominvalidtoken", "Newpassword@123")).rejects.toThrow(
                 "Invalid reset token"
             )
 
@@ -221,7 +221,7 @@ describe("AuthService", ()=>{
                     id:testUserAccounts.userAccount1.id
                 }
             })
-            const isPasswordUnchanged = await bcrypt.compare("johnfernandes@123", account.password)
+            const isPasswordUnchanged = await bcrypt.compare("Johnfernandes@123", account.password)
 
             expect(isPasswordUnchanged).toBe(true)
         })
@@ -237,7 +237,7 @@ describe("AuthService", ()=>{
                 }
             })
 
-            await expect(service.resetPassword(process.env.MOCK_PASSWORD_RESET_TOKEN, "newpassword@123")).rejects.toThrow(
+            await expect(service.resetPassword(process.env.MOCK_PASSWORD_RESET_TOKEN, "Newpassword@123")).rejects.toThrow(
                 "Your reset token has been expired"
             )
 
@@ -249,7 +249,7 @@ describe("AuthService", ()=>{
             })
 
             const isPasswordUnchanged = await bcrypt.compare(
-                "johnfernandes@123",
+                "Johnfernandes@123",
                 account.password
             )
 

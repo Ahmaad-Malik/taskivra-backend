@@ -2,7 +2,7 @@
 //functionalities for admin and general
 //user related to accounts
 
-const {ConflictError, NotFoundError, UnauthorizedError} = require("../errors/appError")
+const {ConflictError, NotFoundError, UnauthorizedError, ForbiddenError} = require("../errors/appError")
 const bcrypt = require("bcrypt")
 const {redisClient} = require("../config/redisClient")
 const crypto = require("crypto")
@@ -14,7 +14,7 @@ class AccountService {
     }
 
     signup = async(userAccountDetails) => {
-        const {
+        let {
             username, 
             firstname, 
             lastname, 
@@ -22,6 +22,8 @@ class AccountService {
             email, 
             password
         } = userAccountDetails
+
+        email = email.trim()
 
         //check if account (username or email) already exists
         if(await this.#usernameOrEmailExists(username, email)){
@@ -151,11 +153,20 @@ class AccountService {
         }
     }
 
-    deleteAccount = async(accountId) => {
+    deleteAccount = async(requestUserId, accountId, password) => {
         //check if account exists based on id
         const account = await this.getAccountById(accountId)
         if(!account){
             throw new NotFoundError("Invalid account id")
+        }
+
+        //get account of request user to match password
+        const requestUser = await this.getAccountById(requestUserId)
+
+        //check if password is correct 
+        const isCorrectPassword = await bcrypt.compare(password, requestUser.password)
+        if(!isCorrectPassword){
+            throw new ForbiddenError("Incorrect password")
         }
 
         //delete the account from the database(hard delete for now)

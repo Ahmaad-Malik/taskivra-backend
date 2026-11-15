@@ -14,6 +14,7 @@ class AuthService{
         let query = {username}
 
         if(!username){
+            email = email.trim()
             query = {email}
         }
         //validate username or email
@@ -55,6 +56,7 @@ class AuthService{
     }
 
     forgotPassword = async(email) => {
+        email = email.trim()
         //find account
         const account = await this.prisma.user.findUnique({
             where: {email}
