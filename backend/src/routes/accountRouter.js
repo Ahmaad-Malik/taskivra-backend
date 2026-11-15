@@ -4,11 +4,13 @@ const {AccountController, AdminAccountController} = require("../controllers/acco
 const {authorize, authenticate, isAccountOwner} = require("../middlewares/authMiddlewares")
 const {prisma} = require("../../prisma/client")
 const {AuthService} = require("../services/authService")
+const { SessionService } = require("../services/sessionService")
 
 //Services and Controllers instances to use them
-const accountService = new AccountService(prisma)
-const adminAccountService = new AdminAccountService(prisma)
-const authService = new AuthService(prisma)
+const sessionService = new SessionService()
+const accountService = new AccountService(prisma, sessionService)
+const adminAccountService = new AdminAccountService(prisma, sessionService)
+const authService = new AuthService(prisma, sessionService)
 
 const accountController = new AccountController(accountService)
 const adminAccountController = new AdminAccountController(adminAccountService)

@@ -1,5 +1,6 @@
 const {AccountCreationInputsValidator, BaseAuthInputsValidator, AccountUpdationInputsValidator} = require("../validators/authInputsValidators")
 const {BadRequestError, ErrorModel} = require("../errors/appError")
+const { AuthService } = require("../services/authService")
 
 //Account controller that handles Http requests
 //without directly interacting with database
@@ -102,6 +103,13 @@ class AccountController {
 
             const account = await this.accountService.deleteAccount(Number(req.user.accountId), Number(accountId), password)
 
+            //clearing the cookie only when user is
+            //deleting his own account, not when admin deletes
+            //another user's account
+            if (Number(req.user.accountId) === Number(accountId)){
+                res.clearCookie(AuthService.COOKIE_KEY, AuthService.COOKIE_OPTIONS)
+            }
+
             res.status(200).json({
                 success:true,
                 message:"Account deleted permanently",
@@ -129,7 +137,7 @@ class AccountController {
 
             new BaseAuthInputsValidator().validatePassword(newPassword)
 
-            const account = await this.accountService.changePassword(oldPassword, newPassword, Number(accountId))
+            const account = await this.accountService.changePassword(oldPassword, newPassword, Number(accountId), req.user.jti)
 
             res.status(200).json({
                 success:true,
